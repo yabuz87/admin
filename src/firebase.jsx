@@ -1,19 +1,21 @@
-import { initializeApp, getApps, getApp } from "firebase/app";
+// User Firebase configuration
+import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyChYFHQqi6abS5IpNaD6MxdB0ZQi_XITnE",
-  authDomain: "adminofquiz.firebaseapp.com",
-  projectId: "adminofquiz",
-  storageBucket: "adminofquiz.firebasestorage.app",
-  messagingSenderId: "328804395592",
-  appId: "1:328804395592:web:65ec32f43285be1f9d067d"
+  apiKey: "AIzaSyDSOsnc5uFzsRuVPg3reZzpZwkpIpoOv-Q",
+  authDomain: "quizapp-9d1e6.firebaseapp.com",
+  projectId: "quizapp-9d1e6",
+  storageBucket: "quizapp-9d1e6.firebasestorage.app",
+  messagingSenderId: "249222343554",
+  appId: "1:249222343554:web:a5e3545b2caf12fd16bd9b"
 };
 
-// Check if a Firebase app is already initialized, if not initialize it
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-// Initialize Firestore
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
-export { app, db };
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+export { app, auth, db, provider };

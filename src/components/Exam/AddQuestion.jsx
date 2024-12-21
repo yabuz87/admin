@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { MyContext } from '../context';
 import { db } from '../../firebase'; // Adjust the path as necessary
-import { collection, doc, setDoc, getDocs } from "firebase/firestore";
+import { collection, doc, setDoc, getDocs } from "firebase/firestore"; // Correct import path
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Rings } from 'react-loader-spinner';
