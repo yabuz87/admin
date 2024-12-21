@@ -112,19 +112,19 @@ const AddQuestion = () => {
           <Rings color="#00BFFF" height={80} width={80} />
         </div>
       ) : (
-        <ul>
+        <ol>
           {questions.map((question) => (
             <li key={question.id}>
-              <div><strong>Question:</strong> {question.question}</div>
-              <div><strong>Option A:</strong> {question.optionA}</div>
-              <div><strong>Option B:</strong> {question.optionB}</div>
-              <div><strong>Option C:</strong> {question.optionC}</div>
-              <div><strong>Option D:</strong> {question.optionD}</div>
-              <div><strong>Answer:</strong> {question.answer}</div>
-              <div><strong>Explanation:</strong> {question.explanation}</div>
+              <div className="option"><strong>Question:</strong> {question.question}</div>
+              <div className="option" ><strong>Option A:</strong> {question.optionA}</div>
+              <div className="option"><strong>Option B:</strong> {question.optionB}</div>
+              <div className="option"><strong>Option C:</strong> {question.optionC}</div>
+              <div className="option"><strong>Option D:</strong> {question.optionD}</div>
+              <div className="Answer-div"><strong>Answer:</strong> {question.answer}</div>
+              <div className="explanation-div"><strong>Explanation:</strong> {question.explanation}</div>
             </li>
           ))}
-        </ul>
+        </ol>
       )}
 
       <form className="question-form-container" onSubmit={handleSubmit}>
