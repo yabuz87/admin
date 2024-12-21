@@ -105,8 +105,8 @@ const AddQuestion = () => {
           <Rings color="#00BFFF" height={80} width={80} />
         </div>
       )}
-      
-      <h2 className="text-center">Existing Questions</h2>
+      <h2>{subject} {chapter}</h2>
+      <h4 className="text-center">Existing Questions</h4>
       {questionsLoading ? (
         <div className="spinner-container">
           <Rings color="#00BFFF" height={80} width={80} />
