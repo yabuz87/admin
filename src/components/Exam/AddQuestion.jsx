@@ -11,10 +11,10 @@ const AddQuestion = () => {
   const { subject, chapter } = useContext(MyContext); // Assume 'chapter' is part of the context
   const [formData, setFormData] = useState({
     question: '',
-    optionA: '',
-    optionB: '',
-    optionC: '',
-    optionD: '',
+    A: '',
+    B: '',
+    C: '',
+    D: '',
     answer: '',
     explanation: ''
   });
