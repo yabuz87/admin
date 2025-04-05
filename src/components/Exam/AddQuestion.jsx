@@ -1,20 +1,20 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { MyContext } from '../context';
-import { db } from '../../firebase'; // Adjust the path as necessary
-import { collection, doc, setDoc, getDocs } from "firebase/firestore"; // Correct import path
+import { MyContext } from '../context'; // Assuming context is used for `subject` and `chapter`
+import { db } from '../../../../src/components/firebase/Firebase'; // Firebase Realtime Database instance
+import { ref, set, push, onValue } from 'firebase/database'; // Import Realtime Database functions
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Rings } from 'react-loader-spinner';
 import './addQuestion.css';
 
 const AddQuestion = () => {
-  const { subject, chapter } = useContext(MyContext); // Assume 'chapter' is part of the context
+  const { subject, chapter } = useContext(MyContext); // Context values for subject and chapter
   const [formData, setFormData] = useState({
     question: '',
-    A: '',
-    B: '',
-    C: '',
-    D: '',
+    optionA: '',
+    optionB: '',
+    optionC: '',
+    optionD: '',
     answer: '',
     explanation: ''
   });
@@ -31,7 +31,7 @@ const AddQuestion = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!subject || !chapter) {
       toast.error("Subject and Chapter must be selected", {
         position: "top-center"
@@ -41,33 +41,32 @@ const AddQuestion = () => {
 
     setLoading(true); // Set loading to true
     try {
-      // Ensure even segments by specifying collection and document ID
-      const courseDocRef = doc(collection(db, "courses"), subject);
-      const chapterDocRef = doc(collection(courseDocRef, "chapters"), chapter);
-      const questionsCollectionRef = collection(chapterDocRef, "questions");
+      // Create a reference for the questions under the selected subject and chapter
+      const questionsRef = ref(db, `courses/${subject}/chapters/${chapter}/questions`);
+      console.log("Realtime Database path:", `courses/${subject}/chapters/${chapter}/questions`);
 
-      // Generate a unique ID for the new question
-      const questionDocRef = doc(questionsCollectionRef);
+      // Push a new question into the Realtime Database
+      const newQuestionRef = push(questionsRef);
+      console.log("Generated question ID:", newQuestionRef.key);
 
-      // Add a new document with the unique ID
-      await setDoc(questionDocRef, {
+      // Use `set` to write data to the new reference
+      await set(newQuestionRef, {
         ...formData,
-        id: questionDocRef.id,
-        createdAt: new Date()
+        id: newQuestionRef.key, // Use the generated key
+        createdAt: new Date().toISOString()
       });
 
+      // Success notification
       toast.success("Question added successfully!", {
         position: "top-center"
       });
 
-      console.log("Document written with ID: ", questionDocRef.id);
-      
       // Fetch updated list of questions
       fetchQuestions();
 
     } catch (e) {
-      console.error("Error adding document: ", e);
-      toast.error("Failed to add question.", {
+      console.error("Error adding question:", e);
+      toast.error("Failed to add question. Please check the console for details.", {
         position: "top-center"
       });
     } finally {
@@ -78,16 +77,14 @@ const AddQuestion = () => {
   const fetchQuestions = async () => {
     if (!subject || !chapter) return;
     try {
-      const questionsCollection = collection(db, "courses", subject, "chapters", chapter, "questions");
-      const querySnapshot = await getDocs(questionsCollection);
-      const questionsList = [];
-      querySnapshot.forEach((doc) => {
-        questionsList.push({ id: doc.id, ...doc.data() });
+      const questionsRef = ref(db, `courses/${subject}/chapters/${chapter}/questions`);
+      onValue(questionsRef, (snapshot) => {
+        const data = snapshot.val();
+        const questionsList = data ? Object.keys(data).map((key) => ({ id: key, ...data[key] })) : [];
+        setQuestions(questionsList);
       });
-      setQuestions(questionsList);
-      console.log("Fetched Questions: ", questionsList);
     } catch (error) {
-      console.error("Error fetching questions: ", error);
+      console.error("Error fetching questions:", error);
     } finally {
       setQuestionsLoading(false); // Set loading to false after fetching questions
     }
@@ -116,7 +113,7 @@ const AddQuestion = () => {
           {questions.map((question) => (
             <li key={question.id}>
               <div className="option"><strong>Question:</strong> {question.question}</div>
-              <div className="option" ><strong>Option A:</strong> {question.optionA}</div>
+              <div className="option"><strong>Option A:</strong> {question.optionA}</div>
               <div className="option"><strong>Option B:</strong> {question.optionB}</div>
               <div className="option"><strong>Option C:</strong> {question.optionC}</div>
               <div className="option"><strong>Option D:</strong> {question.optionD}</div>
